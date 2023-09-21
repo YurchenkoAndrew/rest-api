@@ -7,7 +7,7 @@ use posts::services::{get_posts, post_details, post_create, post_update, post_de
 use sqlx::{Pool, Postgres, postgres::PgPoolOptions};
 
 mod users;
-use users::services::{get_users, user_details, user_create, user_update, user_delete};
+use users::services::{get_users, user_details, user_create, user_update, user_delete, get_user_post};
 
 mod posts;
 
@@ -33,6 +33,7 @@ async fn main() -> Result<()> {
             .service(user_create)
             .service(user_update)
             .service(user_delete)
+            .service(get_user_post)
             .service(get_posts)
             .service(post_details)
             .service(post_create)

@@ -1,6 +1,6 @@
 use actix_web::{Responder, web::{Path, Json, Data}, post, get, patch, delete, HttpResponse};
 
-use crate::{AppState, users::models::UserForList, helpers::time_working::set_current_time};
+use crate::{AppState, users::models::UserForList, helpers::time_working::set_current_time, posts::models::PostForList};
 
 use super::models::{User, UserCreate};
 
@@ -61,8 +61,19 @@ async fn user_update(state: Data<AppState>, path: Path<i32>, user_update: Json<U
 #[delete("/users/{id}")]
 async fn user_delete(state: Data<AppState>, path: Path<i32>) -> impl Responder {
     let id: i32 = path.into_inner();
-    match sqlx::query_as::<_,User>("DELETE FROM users WHERE id = $1 RETURNING id, name, last_name, email, created_at, updated_at").bind(id).fetch_one(&state.db).await {
+    match sqlx::query_as::<_,User>("DELETE FROM users WHERE id = $1 RETURNING id, name, last_name, email, created_at, updated_at").bind(id).fetch_one(&state.db).await
+    {
         Ok(user) => HttpResponse::Ok().json(user),
         Err(_) => HttpResponse::InternalServerError().json("Произошла ошибка удаления пользователя"),
+    }
+}
+
+#[get("/users/{id}/posts")]
+async fn get_user_post(state: Data<AppState>, path: Path<i32>) -> impl Responder {
+    let id = path.into_inner();
+    match sqlx::query_as::<_, PostForList>("SELECT id, title, description FROM posts WHERE user_id = $1").bind(id).fetch_all(&state.db).await
+    {
+        Ok(posts) => HttpResponse::Ok().json(posts),
+        Err(_) => HttpResponse::NotFound().json("У этого пользователя не найдено постов!")
     }
 }
