@@ -5,7 +5,7 @@ use super::models::{UserCreate, User, UserForList};
 use crate::AppState;
 
 pub async fn get_users(state: Data<AppState>) -> Result<Vec<UserForList>, Error> {
-    let users = sqlx::query_as::<_,UserForList>("SELECT name, last_name, email FROM users").fetch_all(&state.db).await?;
+    let users = sqlx::query_as::<_,UserForList>("SELECT id, name, last_name, email FROM users ORDER BY id").fetch_all(&state.db).await?;
     Ok(users)
 }
 

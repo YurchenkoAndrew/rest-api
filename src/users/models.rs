@@ -22,6 +22,7 @@ pub struct UserCreate {
 
 #[derive(Serialize, FromRow)]
 pub struct UserForList {
+    pub id: i32,
     pub name: String,
     pub last_name: String,
     pub email: String,
