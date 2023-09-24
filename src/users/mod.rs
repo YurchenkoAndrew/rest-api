@@ -1,2 +1,4 @@
 pub mod models;
-pub mod services;
+pub mod controller;
+pub mod routes;
+pub mod repository;

@@ -3,15 +3,15 @@ use dotenv::dotenv;
 mod helpers;
 
 use actix_web::{HttpServer, App, web::Data};
-use posts::services::{get_posts, post_details, post_create, post_update, post_delete};
 use sqlx::{Pool, Postgres, postgres::PgPoolOptions};
 
 mod users;
-use users::services::{get_users, user_details, user_create, user_update, user_delete, get_user_post};
+use users::routes::config as user_routes;
 
 mod posts;
+use posts::routes::config as post_routes;
 
-struct AppState {
+pub struct AppState {
     db: Pool<Postgres>
 }
 
@@ -28,16 +28,7 @@ async fn main() -> Result<()> {
     HttpServer::new(move || {
         App::new()
             .app_data(Data::new(AppState{db: pool.clone()}))
-            .service(get_users)
-            .service(user_details)
-            .service(user_create)
-            .service(user_update)
-            .service(user_delete)
-            .service(get_user_post)
-            .service(get_posts)
-            .service(post_details)
-            .service(post_create)
-            .service(post_update)
-            .service(post_delete)
+            .configure(user_routes)
+            .configure(post_routes)
     }).bind(("127.0.0.1", 8080))?.run().await
 }
