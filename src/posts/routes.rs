@@ -1,6 +1,6 @@
 use actix_web::web;
 
-use super::services::{get_posts, post_details, post_create, post_update, post_delete};
+use super::controller::{get_posts, post_details, post_create, post_update, post_delete};
 
 
 pub fn config(cfg: &mut web::ServiceConfig) {
